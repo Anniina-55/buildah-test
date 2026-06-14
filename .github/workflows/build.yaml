@@ -31,8 +31,10 @@ jobs:
 
       - name: Tag image
         run: |
-          buildah tag scratch-static-web ghcr.io/${{ github.repository_owner }}/scratch-static-web:latest
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          buildah tag scratch-static-web ghcr.io/$OWNER/scratch-static-web:latest
 
       - name: Push image
         run: |
-          buildah push ghcr.io/${{ github.repository_owner }}/scratch-static-web:latest
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          buildah push ghcr.io/$OWNER/scratch-static-web:latest

@@ -25,7 +25,7 @@ chmod +x $mnt/bin/caddy
 echo "Configuring container..."
 buildah config \
   --env PATH=/bin \
-  --cmd "/bin/busybox httpd -f -p 8082 -h /www" \
+  --cmd "/bin/caddy file-server --root /www --listen :8080" \
   $ctr
 
 echo "Committing image..."

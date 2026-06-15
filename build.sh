@@ -17,15 +17,14 @@ cp index.html $mnt/www/
 cp containers.png $mnt/www/
 
 echo "Downloading busybox (static binary)..."
-curl -L -o $mnt/bin/busybox \
-https://busybox.net/downloads/binaries/1.36.1-x86_64-linux-musl/busybox
+curl -L -o $mnt/bin/busybox https://busybox.net/downloads/binaries/1.36.1-x86_64-linux-musl/busybox
 
 chmod +x $mnt/bin/busybox
 
 echo "Configuring container..."
 buildah config \
   --env PATH=/bin \
-  --cmd "/bin/busybox httpd -f -p 8080 -h /www" \
+  --cmd "/bin/busybox httpd -f -p 8082 -h /www" \
   $ctr
 
 echo "Committing image..."

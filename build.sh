@@ -16,10 +16,11 @@ echo "Copying static files..."
 cp index.html $mnt/www/
 cp containers.png $mnt/www/
 
-echo "Downloading busybox (static binary)..."
-curl -L -o $mnt/bin/busybox https://busybox.net/downloads/binaries/x86_64/busybox
+echo "Downloading Caddy binary..."
+curl -L -o $mnt/bin/caddy \
+https://github.com/caddyserver/caddy/releases/latest/download/caddy_linux_amd64
 
-chmod +x $mnt/bin/busybox
+chmod +x $mnt/bin/caddy
 
 echo "Configuring container..."
 buildah config \

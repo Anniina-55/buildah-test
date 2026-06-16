@@ -1,8 +1,11 @@
-name: Build scratch image
+name: Build and push scratch image
 
 on:
   push:
-    branches: [main]
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
   build:
@@ -13,28 +16,64 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Buildah
+      - name: Install dependencies (Buildah + Go)
         run: |
-          sudo apt update
-          sudo apt install -y buildah
+          sudo apt-get update
+          sudo apt-get install -y buildah golang-go
 
-      - name: Build image (scratch)
+      - name: Normalize image name to match repo name
         run: |
-          buildah unshare ./build.sh
+          IMAGE_NAME=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
       - name: Login to GHCR
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | buildah login ghcr.io -u ${{ github.actor }} --password-stdin
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+            buildah login ghcr.io \
+            -u "${{ github.actor }}" \
+            --password-stdin
+
+      - name: Build Go binary
+        run: |
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
+          go build -o server main.go
+
+      - name: Create container and build image
+        run: |
+          set -e
+
+          container=$(buildah from scratch)
+          echo "CONTAINER=$container" >> $GITHUB_ENV
+
+          mountpoint=$(buildah mount $container)
+
+          mkdir -p $mountpoint/bin
+          mkdir -p $mountpoint/www
+
+          # copy static files (must exist in repo)
+          cp -r www/* $mountpoint/www/
+
+          # copy server binary
+          cp server $mountpoint/bin/server
+          chmod +x $mountpoint/bin/server
+
+          buildah config --cmd "/bin/server" $container
+
+          buildah commit $container $IMAGE_NAME
 
       - name: Tag image
         run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          buildah tag scratch-static-web ghcr.io/$OWNER/scratch-static-web:latest
+          IMAGE="${REGISTRY}/${{ github.repository_owner }}/${IMAGE_NAME}:latest"
+          echo "FULL_IMAGE=$IMAGE" >> $GITHUB_ENV
+          buildah tag $IMAGE_NAME $IMAGE
 
-      - name: Push image
+      - name: Push image to GHCR
         run: |
-          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          buildah push ghcr.io/$OWNER/scratch-static-web:latest
+          buildah push $FULL_IMAGE
+
+      - name: Show images
+        run: |
+          buildah images

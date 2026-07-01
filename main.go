@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+	"encoding/json"
+	"os"
+	"runtime"
 )
+
+var startTime = time.Now()
 
 func main() {
 
@@ -12,12 +17,33 @@ func main() {
 	fs := http.FileServer(http.Dir("./www"))
 	http.Handle("/", fs)
 
-	// 2. Interaktiivinen endpoint
+	// 2. endpoint for fetching date and time
 	http.HandleFunc("/api/time", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Server time: %s", time.Now().Format(time.RFC3339))
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprint(w, time.Now().UTC().Format(time.RFC3339))
 	})
 
-	// 3. Simple input example
+	http.HandleFunc("/api/info", func(w http.ResponseWriter, r *http.Request) {
+		var mem runtime.MemStats
+		runtime.ReadMemStats(&mem)
+
+		hostname, _ := os.Hostname()
+
+		info := map[string]interface{}{
+			"hostname": hostname,
+			"uptime":   time.Since(startTime).String(),
+			"go":       runtime.Version(),
+			"cpu":      runtime.NumCPU(),
+			"os":       runtime.GOOS,
+			"arch":     runtime.GOARCH,
+			"alloc_mb": mem.Alloc / 1024 / 1024,
+			"sys_mb":   mem.Sys / 1024 / 1024,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(info)
+	})
+
 	http.HandleFunc("/api/hello", func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("name")
 		if name == "" {
@@ -27,5 +53,7 @@ func main() {
 	})
 
 	fmt.Println("Server running on :8082")
-	http.ListenAndServe(":8082", nil)
+	if err := http.ListenAndServe(":8082", nil); err != nil {
+	fmt.Println("Server error:", err)
+	}
 }

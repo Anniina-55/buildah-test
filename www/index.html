@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- This is just example, make your own content -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buildah scratch demo</title>
+    <title>Buildah container demo</title>
 </head>
 <style>
     body {
@@ -49,39 +49,164 @@
         max-width: 500px;
         }
      .btn {
-	padding: 8px;
-	border-radius: 16px;
-	background: rgba(16, 185, 129, 0.05);
-	color: white;
-	font-size: 16px;
-	margin-top: 12px;
-     }
-     .timeDisplay {
-	color: white;
-        font-size: 16px;
-     }
+		padding: 8px 12px;
+		border-radius: 16px;
+		background: rgba(16, 185, 129, 0.05);
+		color: #34d399;
+		font-size: 16px;
+		margin-top: 12px;
+		border:1px solid #ffdbf4;
+		}
+	input {
+		width: 100%;
+		margin-left: 10px;
+		padding: 6px 10px;
+		border-radius: 12px;
+
+		background: rgba(255, 255, 255, 0.08);
+		border: 1px solid rgba(255, 255, 255, 0.15);
+
+		color: #d1fae5;
+		outline: none;
+
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+	}
+	input:focus {
+		border: 1px solid rgba(52, 211, 153, 0.6);
+		background: rgba(255, 255, 255, 0.12);
+	}
+	.output {
+		color: white;
+		font-size: 24px;
+	}
+    .timeDisplay {
+		color: white;
+			font-size: 16px;
+		}
+	
+	.serverBox {
+		margin-top: 20px;
+		padding: 16px;
+
+		border-radius: 14px;
+
+		background: rgba(255, 255, 255, 0.06);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+
+		color: #d1fae5;
+		text-align: left;
+	}
+	.serverBox pre {
+		margin: 0;
+		white-space: pre-wrap;
+		word-break: break-word;
+		line-height: 1.5;
+	}
+
 	
 
 </style>
 <body>
     <div class="card">
 
-        <h1>Hello from Buildah scratch image!</h1>
+        <h1>Hello from Buildah scratch image container!</h1>
         <p>This page is served from a manually created scratch image.</p>
 
-    	
-	<button onclick="getTime()" class="btn">Get server time</button>
-	<p id="time" class="timeDisplay"></p>
+		<table>
+		<tr>
+			<td id="greeting">What's your name?</td>
+			<td>
+			<input id="nameInput" type="text" />
+			</td>
+		</tr>
+		<tr>
+			<p id="output" class="output"></p>
+		</tr>
+		</table>
+
+		<br>
+
+		<label for="timezone">Timezone:</label>
+		<select id="timezone" onchange="updateTime()">
+			<option value="local">Local</option>
+			<option value="UTC">UTC</option>
+			<option value="Europe/London">London</option>
+			<option value="America/New_York">New York</option>
+			<option value="Asia/Shanghai">Shanghai</option>
+			<option value="Australia/Sydney">Canberra</option>
+		</select>
+			
+		<p id="time" class="timeDisplay"></p>
+
+		<div class="serverBox">
+		<h3>Server info</h3>
+		<pre id="serverInfo">Loading...</pre>
+		</div>
+		<button class="btn" onclick=loadServerInfo()>Refresh</button>
+
+	</div>
 
 	<script>
-		function getTime() {
-  			fetch("/api/time")
-    			.then(r => r.text())
-    			.then(data => {
-      				document.getElementById("time").innerText = data;
-    			});
+
+		window.addEventListener("load", () => {
+			document.getElementById("nameInput").value = "";
+			document.getElementById("output").textContent = "";
+		});
+
+		const input = document.getElementById("nameInput");
+		const output = document.getElementById("output");
+
+		input.addEventListener("input", async() => {
+			const name = input.value;
+			const res = await fetch("/api/hello?name=" + encodeURIComponent(name));
+			const text = await res.text();
+			output.textContent = text;
+		});
+
+		async function updateTime() {
+    			const res = await fetch("/api/time");
+    			const utcString = await res.text();
+    			const date = new Date(utcString);
+
+    			const timeZone = document.getElementById("timezone").value;
+
+    			let formatted;
+
+    			if (timeZone === "local") {
+        			formatted = date.toLocaleString();
+    			} else {
+        			formatted = date.toLocaleString("en-GB", {
+            				timeZone: timeZone,
+            				year: "numeric",
+            				month: "2-digit",
+            				day: "2-digit",
+            				hour: "2-digit",
+            				minute: "2-digit",
+            				second: "2-digit"
+        			});
+    			}
+				document.getElementById("time").textContent = formatted;
+			}
+
+
+		async function loadServerInfo() {
+			try {
+				const res = await fetch("/api/info");
+				const data = await res.json(); 
+				document.getElementById("serverInfo").textContent = JSON.stringify(data, null, 2);
+			} catch (err) {
+				document.getElementById("serverInfo").textContent = "Error loading server info";
+			}
 		}
+		document.getElementById("timezone").addEventListener("change", updateTime);
+		// initial load
+		updateTime();
+		loadServerInfo();
+
 	</script>	
-    </div>
 </body>
 </html>

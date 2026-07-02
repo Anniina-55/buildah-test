@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Surprise</title>
+</head>
+<style>
+   body {
+        margin: 0;
+        height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        font-family: Arial, sans-serif;
+        background: linear-gradient(155deg, #052e2b, #0f172a);
+        color: #d1fae5;
+        text-align: center;
+      }
+   h1 {
+        color: #34d399;
+        margin-bottom: 10px;
+      }
+   p {
+        font-size: 18px;
+        color: #a7f3d0;
+        margin-bottom: 20px;
+     }
+</style>
+<body>
+
+<h1>Loading surprise...</h1>
+
+<img src="/cow.jpg" style="width:300px; border-radius:12px;" />
+
+<p id="message"></p>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const name = params.get("name") || "mysterious user";
+
+fetch("/api/surprise?name=" + encodeURIComponent(name))
+    .then(res => res.json())
+    .then(data => {
+
+        document.querySelector("h1").textContent =
+            "Hello " + data.name + "!";
+
+        document.getElementById("message").textContent =
+            data.message;
+    });
+</script>
+
+</body>
+</html>

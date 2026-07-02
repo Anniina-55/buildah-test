@@ -5,116 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buildah container demo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<style>
-    body {
-        margin: 0;
-        height: 100vh;
 
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-
-        font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #052e2b, #0f172a);
-        color: #d1fae5;
-        text-align: center;
-    }
-
-    h1 {
-        color: #34d399;
-        margin-bottom: 10px;
-    }
-
-    p {
-        font-size: 18px;
-        color: #a7f3d0;
-        margin-bottom: 20px;
-    }
-
-    .card {
-        text-align: center;
-        padding: 40px;
-        border-radius: 16px;
-
-        background: rgba(16, 185, 129, 0.07);
-        backdrop-filter: blur(12px);
-           -webkit-backdrop-filter: blur(12px);
-
-        border: 1px solid rgba(255, 255, 255, 0.1);
-
-        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-
-        max-width: 500px;
-        }
-     .btn {
-		padding: 8px 12px;
-		border-radius: 16px;
-		background: rgba(16, 185, 129, 0.05);
-		color: #34d399;
-		font-size: 16px;
-		margin-top: 12px;
-		border:1px solid #ffdbf4;
-		}
-	input {
-		width: 100%;
-		margin-left: 10px;
-		padding: 6px 10px;
-		border-radius: 12px;
-
-		background: rgba(255, 255, 255, 0.08);
-		border: 1px solid rgba(255, 255, 255, 0.15);
-
-		color: #d1fae5;
-		outline: none;
-
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
-	}
-	input:focus {
-		border: 1px solid rgba(52, 211, 153, 0.6);
-		background: rgba(255, 255, 255, 0.12);
-	}
-	.output {
-		color: white;
-		font-size: 24px;
-	}
-    .timeDisplay {
-		color: white;
-			font-size: 16px;
-		}
-	
-	.serverBox {
-		margin-top: 20px;
-		padding: 16px;
-
-		border-radius: 14px;
-
-		background: rgba(255, 255, 255, 0.06);
-		border: 1px solid rgba(255, 255, 255, 0.12);
-
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-
-		color: #d1fae5;
-		text-align: left;
-	}
-	.serverBox pre {
-		margin: 0;
-		white-space: pre-wrap;
-		word-break: break-word;
-		line-height: 1.5;
-	}
-
-	
-
-</style>
 <body>
     <div class="card">
 
         <h1>Hello from Buildah scratch image container!</h1>
-        <p>This page is served from a manually created scratch image.</p>
+          <p>This page is served from a manually created scratch image.</p>
+       	  <img src="./containers.png" alt="Layers">
 
 		<table>
 		<tr>
@@ -124,10 +23,12 @@
 			</td>
 		</tr>
 		<tr>
-			<p id="output" class="output"></p>
+			<td id="output" class="output"></td>
 		</tr>
 		</table>
 
+		<br>
+		<button class="btn" onclick="surprise()">Surprise me</button>
 		<br>
 
 		<label for="timezone">Timezone:</label>
@@ -160,12 +61,10 @@
 		const input = document.getElementById("nameInput");
 		const output = document.getElementById("output");
 
-		input.addEventListener("input", async() => {
-			const name = input.value;
-			const res = await fetch("/api/hello?name=" + encodeURIComponent(name));
-			const text = await res.text();
-			output.textContent = text;
-		});
+		function surprise() {
+    			const name = document.getElementById("nameInput").value;
+    			window.location.href = "/surprise.html?name=" + encodeURIComponent(name);
+		}
 
 		async function updateTime() {
     			const res = await fetch("/api/time");

@@ -44,12 +44,18 @@ func main() {
 		json.NewEncoder(w).Encode(info)
 	})
 
-	http.HandleFunc("/api/hello", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/api/surprise", func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("name")
 		if name == "" {
-			name = "world"
+			name = "mysterious user"
 		}
-		fmt.Fprintf(w, "Hello %s!", name)
+		var message = "You have been selected as today’s official cloud administrator of imaginary servers"
+		w.Header().Set("Content-Type", "application/json")
+
+    		json.NewEncoder(w).Encode(map[string]string{
+        		"name":    name,
+        		"message": message,
+    		})
 	})
 
 	fmt.Println("Server running on :8082")

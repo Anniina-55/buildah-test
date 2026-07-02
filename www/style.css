@@ -1,0 +1,90 @@
+body {
+        margin: 0;
+        height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        font-family: Arial, sans-serif;
+        background: linear-gradient(155deg, #052e2b, #0f172a);
+        color: #d1fae5;
+        text-align: center;
+    }
+h1 {
+        color: #34d399;
+        margin-bottom: 10px;
+    }
+p {
+        font-size: 18px;
+        color: #a7f3d0;
+        margin-bottom: 20px;
+   }
+.card {
+        text-align: center;
+        padding: 40px;
+        border-radius: 16px;
+        background: rgba(16, 185, 129, 0.07);
+        backdrop-filter: blur(12px);
+         -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        max-width: 60vw;
+       }
+img {
+        max-width: 300px;
+        height: auto;
+        border-radius: 12px;
+	margin: 20px;
+    }
+.btn {
+        padding: 8px 12px;
+        border-radius: 16px;
+        background: rgba(16, 185, 129, 0.05);
+        color: #34d399;
+        font-size: 16px;
+        margin: 20px;
+        border:1px solid #ffdbf4;
+      }
+input {
+        width: 100%;
+        margin-left: 10px;
+        padding: 6px 10px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #d1fae5;
+        outline: none;
+        backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+       }
+input:focus {
+        border: 1px solid rgba(52, 211, 153, 0.6);
+        background: rgba(255, 255, 255, 0.12);
+        }
+.output {
+        color: white;
+        font-size: 24px;
+        }
+.timeDisplay { 
+        color: white;
+        font-size: 16px;
+        }
+.serverBox {         
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+        color: #d1fae5;
+        text-align: left;
+        }
+.serverBox pre {
+         margin: 0;
+         white-space: pre-wrap;
+         word-break: break-word;
+         line-height: 1.5;
+        }

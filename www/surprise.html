@@ -40,7 +40,7 @@
 const params = new URLSearchParams(window.location.search);
 const name = params.get("name") || "mysterious user";
 
-fetch("/api/surprise?name=" + encodeURIComponent(name))
+fetch("/proxy/go-web-app/api/surprise?name=" + encodeURIComponent(name))
     .then(res => res.json())
     .then(data => {
 

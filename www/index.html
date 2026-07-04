@@ -94,7 +94,7 @@
 
 		async function loadServerInfo() {
 			try {
-				const res = await fetch("/api/info");
+				const res = await fetch("/proxy/go-web-app/api/info");
 				const data = await res.json(); 
 				document.getElementById("serverInfo").textContent = JSON.stringify(data, null, 2);
 			} catch (err) {

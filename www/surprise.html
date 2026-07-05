@@ -37,10 +37,11 @@
 <p id="message"></p>
 
 <script>
+const BASE_URL = "http://localhost:5005/proxy/go-web-app"
 const params = new URLSearchParams(window.location.search);
 const name = params.get("name") || "mysterious user";
 
-fetch("/proxy/go-web-app/api/surprise?name=" + encodeURIComponent(name))
+fetch(BASE_URL + "/api/surprise?name=" + encodeURIComponent(name))
     .then(res => res.json())
     .then(data => {
 
